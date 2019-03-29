@@ -144,7 +144,7 @@
             success: function (data) {
                 if (data.code == 0) {
                     $.each(data.data, function (index, value) {
-                        var img = "<img class='animated fadeInDown' src='" + value + "'></img>";
+                        var img = "<img class='imgBox animated fadeInDown' src='" + value + "'></img>";
                         $(".box").append(img);
                     });
                     $('.mask').hide();
