@@ -10,6 +10,7 @@
     <title>水滴智慧</title>
     <!--<link rel="stylesheet" href="css/reset.css">-->
     <script src="js/jquery.min.js"></script>
+    <script src="js/pinch-zoom.umd.js"></script>
     <style>
         * {
             margin: 0;
@@ -27,6 +28,11 @@
         }
 
         .imgBox {
+            width: 100%;
+            height: auto;
+        }
+
+        .openMask img {
             width: 100%;
             height: auto;
         }
@@ -79,29 +85,55 @@
         }
 
         @-webkit-keyframes stretchdelay {
-            0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
-            20% { -webkit-transform: scaleY(1.0) }
+            0%, 40%, 100% {
+                -webkit-transform: scaleY(0.4)
+            }
+            20% {
+                -webkit-transform: scaleY(1.0)
+            }
         }
 
         @keyframes stretchdelay {
             0%, 40%, 100% {
                 transform: scaleY(0.4);
                 -webkit-transform: scaleY(0.4);
-            }  20% {
-                   transform: scaleY(1.0);
-                   -webkit-transform: scaleY(1.0);
-               }
+            }
+            20% {
+                transform: scaleY(1.0);
+                -webkit-transform: scaleY(1.0);
+            }
+        }
+
+        .openMaskBox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #000;
+            height: 100%;
+            width: 100%;
+        }
+
+        .openMaskBox p {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-size: 20px;
+            z-index: 2000;
         }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <!--<img class="imgBox" src="images/111.jpg" alt="">-->
+    <img class="imgBox" src="images/111.jpg" alt="">
+    <img class="imgBox" src="images/222.jpg" alt="">
+    <img class="imgBox" src="images/333.jpg" alt="">
+    <img class="imgBox" src="images/444.jpg" alt="">
 </div>
 
-<div class="mask">
-    <div class="spinner" style="display: block;">
+<div class="mask" style="display: none;">
+    <div class="spinner">
         <div class="rect1"></div>
         <div class="rect2"></div>
         <div class="rect3"></div>
@@ -110,51 +142,72 @@
     </div>
 </div>
 
+<div class="openMaskBox" style="display: none;">
+    <p>X</p>
+    <div class="openMask">
+        <img src="" alt="">
+    </div>
+</div>
+
 <script>
 
-    // var url = 'www.dddd.com?device_id=54-BF-64-A6-67-DB&time=20190327175340';
-    var url = window.location.href;
-
-    var device_id = fetchRequestParmValue(url, 'device_id');
-    var time = fetchRequestParmValue(url, 'time');
-
-    function fetchRequestParmValue(url, paras) {
-        var paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
-        var paraObj = {}
-        for (i = 0; j = paraString[i]; i++) {
-            paraObj[j.substring(0, j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=") + 1, j.length);
-        }
-        var returnValue = paraObj[paras.toLowerCase()];
-        if (typeof (returnValue) == "undefined") {
-            return "";
-        } else {
-            return returnValue;
-        }
-    }
+    // // var url = 'www.dddd.com?device_id=54-BF-64-A6-67-DB&time=20190327175340';
+    // var url = window.location.href;
+    //
+    // var device_id = fetchRequestParmValue(url, 'device_id');
+    // var time = fetchRequestParmValue(url, 'time');
+    //
+    // function fetchRequestParmValue(url, paras) {
+    //     var paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
+    //     var paraObj = {}
+    //     for (i = 0; j = paraString[i]; i++) {
+    //         paraObj[j.substring(0, j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=") + 1, j.length);
+    //     }
+    //     var returnValue = paraObj[paras.toLowerCase()];
+    //     if (typeof (returnValue) == "undefined") {
+    //         return "";
+    //     } else {
+    //         return returnValue;
+    //     }
+    // }
+    //
+    // $.ajax({
+    //     type: "post",
+    //     dataType: "json",
+    //     url: 'blackboard/getblackboard',
+    //     data: {
+    //         device_id: device_id,
+    //         time: time
+    //     },
+    //     success: function (data) {
+    //         if (data.code == 0) {
+    //             $.each(data.data, function (index, value) {
+    //                 var img = "<img class='imgBox animated fadeInDown' src='" + value + "'></img>";
+    //                 $(".box").append(img);
+    //             });
+    //             $('.mask').hide();
+    //         }else {
+    //             alert('加载失败...')
+    //         }
+    //
+    //     }
+    // });
 
     $(function () {
-        $.ajax({
-            type: "post",
-            dataType: "json",
-            url: 'blackboard/getblackboard',
-            data: {
-                device_id: device_id,
-                time: time
-            },
-            success: function (data) {
-                if (data.code == 0) {
-                    $.each(data.data, function (index, value) {
-                        var img = "<img class='imgBox animated fadeInDown' src='" + value + "'></img>";
-                        $(".box").append(img);
-                    });
-                    $('.mask').hide();
-                }else {
-                    alert('加载失败...')
-                }
 
-            }
+        $('.imgBox').on('click', function () {
+            $('.openMaskBox').show();
+            $('.openMask img').attr('src', $(this).attr('src'));
         });
+
+        $('.openMaskBox p').on('touchstart', function () {
+            $('.openMaskBox').hide();
+            return false
+        });
+
     })
+
+    new window.PinchZoom.default(document.querySelector('div.openMask'), {});
 
 
 </script>
